@@ -1,0 +1,35 @@
+version: "3.8"
+services:
+  db:
+    image: postgres:13  # Puedes cambiar a un contenedor de datos si prefieres
+    volumes:
+      - db_data:/var/lib/postgresql/data
+    environment:
+      POSTGRES_USER: ivan
+      POSTGRES_PASSWORD: ivan123
+      POSTGRES_DB: clashtimer
+  backend:
+    build: ./backend
+    ports:
+      - "8000:8000"
+    depends_on:
+      - db
+    environment:
+      DATABASE_URL: "postgresql://ivan:ivan123@db/clashtimer" # Para PostgreSQL
+      SECRET_KEY: "tu_secreto_seguro" # Repite el SECRET_KEY del backend
+  nginx:
+    image: nginx:latest
+    ports:
+      - "8080:80"
+      - "8443:443"
+    volumes:
+       - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+       - ./nginx/certs:/etc/nginx/certs:ro
+    depends_on:
+      - backend
+    
+    env_file:
+      - .env
+
+volumes:
+  db_data:
