@@ -59,3 +59,6 @@ def create_task(task: models.TaskCreate, current_user: models.User = Depends(get
 def read_tasks(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
     tasks_list = tasks.get_tasks(db, skip=skip, limit=limit)
     return tasks_list
+
+
+models.Base.metadata.create_all(bind=engine)  # Crear la base de datos
